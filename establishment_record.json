@@ -1,0 +1,82 @@
+[
+  {
+    "establishment-type": "Dönerladen",
+    "link": "https://www.ggmgastro.com/de-de-eur/geschaeftsart/doenerladen",
+    "description": "Specialized equipment for kebab shops, including rotisseries, cutters, and saladettes."
+  },
+  {
+    "establishment-type": "Pizzeria",
+    "link": "https://www.ggmgastro.com/de-de-eur/geschaeftsart/pizzeria",
+    "description": "Pizza ovens, dough mixers, and preparation tables designed for Italian cuisine."
+  },
+  {
+    "establishment-type": "Imbiss",
+    "link": "https://www.ggmgastro.com/de-de-eur/geschaeftsart/imbiss",
+    "description": "Fast food and snack bar supplies like deep fryers, griddles, and warmers."
+  },
+  {
+    "establishment-type": "Restaurant",
+    "link": "https://www.ggmgastro.com/de-de-eur/geschaeftsart/restaurant",
+    "description": "Professional kitchen appliances and furniture for full-service dining establishments."
+  },
+  {
+    "establishment-type": "Café",
+    "link": "https://www.ggmgastro.com/de-de-eur/geschaeftsart/cafe",
+    "description": "Coffee machines, display cases, and bistro furniture for cafes and coffee shops."
+  },
+  {
+    "establishment-type": "Eisdiele",
+    "link": "https://www.ggmgastro.com/de-de-eur/geschaeftsart/eisdiele",
+    "description": "Ice cream makers, batch freezers, and display units for parlors."
+  },
+  {
+    "establishment-type": "Asiatisches Restaurant",
+    "link": "https://www.ggmgastro.com/de-de-eur/geschaeftsart/asiatisches-restaurant",
+    "description": "Wok burners, rice cookers, and specialized cooling for Asian gastronomy."
+  },
+  {
+    "establishment-type": "Bäckerei",
+    "link": "https://www.ggmgastro.com/de-de-eur/geschaeftsart/baeckerei",
+    "description": "Professional baking ovens, proofers, and dough processing machinery."
+  },
+  {
+    "establishment-type": "Fleischerei",
+    "link": "https://www.ggmgastro.com/de-de-eur/geschaeftsart/fleischerei",
+    "description": "Meat grinders, vacuum sealers, and cold storage for butcher shops."
+  },
+  {
+    "establishment-type": "Bar",
+    "link": "https://www.ggmgastro.com/de-de-eur/geschaeftsart/bar",
+    "description": "Ice machines, glass washers, and back-bar cooling systems."
+  },
+  {
+    "establishment-type": "Supermarkt",
+    "link": "https://www.ggmgastro.com/de-de-eur/geschaeftsart/supermarkt",
+    "description": "Refrigerated wall units, shelving, and heavy-duty storage for retail."
+  },
+  {
+    "establishment-type": "Catering",
+    "link": "https://www.ggmgastro.com/de-de-eur/geschaeftsart/catering",
+    "description": "Portable cooking equipment, thermal boxes, and banquet solutions."
+  },
+  {
+    "establishment-type": "Hotel",
+    "link": "https://www.ggmgastro.com/de-de-eur/geschaeftsart/hotel",
+    "description": "Buffet systems, large-scale laundry, and room service equipment."
+  },
+  {
+    "establishment-type": "Kiosk und Tankstelle",
+    "link": "https://www.ggmgastro.com/de-de-eur/geschaeftsart/kiosk-und-tankstelle",
+    "description": "Compact cooling and snack equipment for small retail spaces."
+  },
+  {
+    "establishment-type": "Kantine",
+    "link": "https://www.ggmgastro.com/de-de-eur/geschaeftsart/kantine",
+    "description": "Industrial sized kettles, steamers, and tray return systems for cafeterias."
+  },
+  {
+    "establishment-type": "Marktbedarf",
+    "link": "https://www.ggmgastro.com/de-de-eur/geschaeftsart/marktbedarf",
+    "description": "Mobile cooking units and storage solutions for market stalls."
+  }
+]

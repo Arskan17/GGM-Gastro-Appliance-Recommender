@@ -1,0 +1,469 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "c976c5f9-2503-4897-a928-826017643028",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -544,
+        0
+      ],
+      "id": "0983fd9d-bb01-4a4e-a28c-9da03174d431",
+      "name": "Webhook",
+      "webhookId": "c976c5f9-2503-4897-a928-826017643028"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.products }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1216,
+        -144
+      ],
+      "id": "784705c9-6dd3-4119-aec2-2a83997dd692",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=# Role\nYou are a context-aware worker, that picks out the correct resource, `link`, that best fits the user's description.\n\n# Input\n\"user-establishment-description\": \"{{ $('Webhook').first().json.body.description }}\"\n\"record\": {{ $json.record.toJsonString() }}\n\n# Output\nreturn the link in the following json schema:\n```json\n{\n  \"type\": \"object\",\n  \"properties\": {\n    \"link\": {\n      \"type\": \"string\",\n      \"description\": \"The full URL of the establishment category.\"\n    }\n  },\n  \"required\": [\"link\"],\n  \"additionalProperties\": false\n}\n```"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        -192,
+        -192
+      ],
+      "id": "8d3c39fc-4e96-4f2e-a3ea-844fa500ff5f",
+      "name": "get category url",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "6NUyMxOiGpqBNYng",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "models/gemini-3-flash-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=# Role\nYou are an appliance recommendation specialist. You understand the user's establishment needs, and with the aid of curated sources, you recommend some appliances and utensils they might need.\n\n# Input\n\"user-establishment-description\": \"{{ $('Webhook').first().json.body.description }}\"\n\"curated-sources\": \"\"\" {{ $json.main }} \"\"\"\"\n\n# Output:\nreturn your recommendations athand the curated sources, respecting this schema:\n```json\n{\n  \"type\": \"object\",\n  \"properties\": {\n    \"products\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"product_name\": { \"type\": \"string\" },\n          \"product_link\": { \"type\": \"string\" },\n          \"price\": { \"type\": \"string\" },\n          \"image_link\": { \"type\": \"string\" }\n        },\n        \"required\": [\"product_name\", \"product_link\", \"price\", \"image_link\"],\n        \"additionalProperties\": false\n      }\n    }\n  },\n  \"required\": [\"products\"]\n}\n```"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        -192
+      ],
+      "id": "aab862af-9dba-4274-9027-ff98ae58c614",
+      "name": "get recommendation",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "6NUyMxOiGpqBNYng",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"record\":\n  [\n    {\n      \"establishment-type\": \"Dönerladen\",\n      \"link\": \"https://www.ggmgastro.com/de-de-eur/geschaeftsart/doenerladen\",\n      \"description\": \"Specialized equipment for kebab shops, including rotisseries, cutters, and saladettes.\"\n    },\n    {\n      \"establishment-type\": \"Pizzeria\",\n      \"link\": \"https://www.ggmgastro.com/de-de-eur/geschaeftsart/pizzeria\",\n      \"description\": \"Pizza ovens, dough mixers, and preparation tables designed for Italian cuisine.\"\n    },\n    {\n      \"establishment-type\": \"Imbiss\",\n      \"link\": \"https://www.ggmgastro.com/de-de-eur/geschaeftsart/imbiss\",\n      \"description\": \"Fast food and snack bar supplies like deep fryers, griddles, and warmers.\"\n    },\n    {\n      \"establishment-type\": \"Restaurant\",\n      \"link\": \"https://www.ggmgastro.com/de-de-eur/geschaeftsart/restaurant\",\n      \"description\": \"Professional kitchen appliances and furniture for full-service dining establishments.\"\n    },\n    {\n      \"establishment-type\": \"Café\",\n      \"link\": \"https://www.ggmgastro.com/de-de-eur/geschaeftsart/cafe\",\n      \"description\": \"Coffee machines, display cases, and bistro furniture for cafes and coffee shops.\"\n    },\n    {\n      \"establishment-type\": \"Eisdiele\",\n      \"link\": \"https://www.ggmgastro.com/de-de-eur/geschaeftsart/eisdiele\",\n      \"description\": \"Ice cream makers, batch freezers, and display units for parlors.\"\n    },\n    {\n      \"establishment-type\": \"Asiatisches Restaurant\",\n      \"link\": \"https://www.ggmgastro.com/de-de-eur/geschaeftsart/asiatisches-restaurant\",\n      \"description\": \"Wok burners, rice cookers, and specialized cooling for Asian gastronomy.\"\n    },\n    {\n      \"establishment-type\": \"Bäckerei\",\n      \"link\": \"https://www.ggmgastro.com/de-de-eur/geschaeftsart/baeckerei\",\n      \"description\": \"Professional baking ovens, proofers, and dough processing machinery.\"\n    },\n    {\n      \"establishment-type\": \"Fleischerei\",\n      \"link\": \"https://www.ggmgastro.com/de-de-eur/geschaeftsart/fleischerei\",\n      \"description\": \"Meat grinders, vacuum sealers, and cold storage for butcher shops.\"\n    },\n    {\n      \"establishment-type\": \"Bar\",\n      \"link\": \"https://www.ggmgastro.com/de-de-eur/geschaeftsart/bar\",\n      \"description\": \"Ice machines, glass washers, and back-bar cooling systems.\"\n    },\n    {\n      \"establishment-type\": \"Supermarkt\",\n      \"link\": \"https://www.ggmgastro.com/de-de-eur/geschaeftsart/supermarkt\",\n      \"description\": \"Refrigerated wall units, shelving, and heavy-duty storage for retail.\"\n    },\n    {\n      \"establishment-type\": \"Catering\",\n      \"link\": \"https://www.ggmgastro.com/de-de-eur/geschaeftsart/catering\",\n      \"description\": \"Portable cooking equipment, thermal boxes, and banquet solutions.\"\n    },\n    {\n      \"establishment-type\": \"Hotel\",\n      \"link\": \"https://www.ggmgastro.com/de-de-eur/geschaeftsart/hotel\",\n      \"description\": \"Buffet systems, large-scale laundry, and room service equipment.\"\n    },\n    {\n      \"establishment-type\": \"Kiosk und Tankstelle\",\n      \"link\": \"https://www.ggmgastro.com/de-de-eur/geschaeftsart/kiosk-und-tankstelle\",\n      \"description\": \"Compact cooling and snack equipment for small retail spaces.\"\n    },\n    {\n      \"establishment-type\": \"Kantine\",\n      \"link\": \"https://www.ggmgastro.com/de-de-eur/geschaeftsart/kantine\",\n      \"description\": \"Industrial sized kettles, steamers, and tray return systems for cafeterias.\"\n    },\n    {\n      \"establishment-type\": \"Marktbedarf\",\n      \"link\": \"https://www.ggmgastro.com/de-de-eur/geschaeftsart/marktbedarf\",\n      \"description\": \"Mobile cooking units and storage solutions for market stalls.\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -320,
+        0
+      ],
+      "id": "a07702c4-ffdc-4b90-8c87-07a76f2ccec8",
+      "name": "categories"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cd8098f5-e587-496f-b701-7b7d063c15df",
+              "name": "link",
+              "value": "={{ $json.content.parts[0].text.parseJson().link }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -64,
+        16
+      ],
+      "id": "bdfe697f-a629-4635-a4d4-cb5e2cb3777a",
+      "name": "extract url"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.link }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        128,
+        16
+      ],
+      "id": "e9c51422-89d1-488a-ac1c-fce8bcf8e58d",
+      "name": "fetch html content"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "main",
+              "cssSelector": "main"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        352,
+        16
+      ],
+      "id": "224db543-a0d8-4c4e-9a4d-0ffd786be313",
+      "name": "extract `main class` from html"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9b0171cd-ed2f-44c6-a1d5-ea77ea17f024",
+              "name": "items",
+              "value": "={{ $json.content.parts[0].text.parseJson().products }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        608,
+        16
+      ],
+      "id": "ee304b0e-5bb5-4dbe-81a5-1d718045819a",
+      "name": "structure recommendation objects into list"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the product array\nconst products = $input.first().json.items; \nconst baseUrl = 'https://www.ggmgastro.com';\n\nlet htmlRows = '';\n\n// Loop through products to build table rows/cards\nproducts.forEach(p => {\n  const fullLink = p.product_link.startsWith('http') ? p.product_link : baseUrl + p.product_link;\n  \n  htmlRows += `\n    <div class=\"product-card\" style=\"margin-bottom: 20px; border: 1px solid #eee; padding: 15px; border-radius: 8px; display: flex; align-items: center;\">\n      <img src=\"${p.image_link}\" alt=\"${p.product_name}\" style=\"width: 100px; height: 100px; object-fit: cover; border-radius: 4px; margin-right: 15px;\">\n      <div>\n        <h3 style=\"margin: 0 0 5px 0; font-size: 16px; color: #333;\">${p.product_name}</h3>\n        <p style=\"margin: 0 0 10px 0; font-weight: bold; color: #ed1c24;\">${p.price}</p>\n        <a href=\"${fullLink}\" style=\"background: #ed1c24; color: white; padding: 6px 12px; text-decoration: none; font-size: 12px; border-radius: 4px;\">View Product</a>\n      </div>\n    </div>\n  `;\n});\n\n// html body\nconst finalHtml = `\n<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <style>\n        body { \n            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; \n            line-height: 1.6; \n            color: #333333; \n            margin: 0; \n            padding: 0;\n            background-color: #f4f4f4;\n        }\n        .wrapper {\n            background-color: #f4f4f4;\n            padding: 20px;\n        }\n        .container { \n            max-width: 600px; \n            margin: 0 auto; \n            background: #ffffff;\n            border-radius: 12px; \n            overflow: hidden;\n            box-shadow: 0 4px 10px rgba(0,0,0,0.05);\n        }\n        .header { \n            background-color: #ed1c24; \n            padding: 30px 20px; \n            text-align: center;\n        }\n        .header h2 { \n            color: #ffffff; \n            margin: 0; \n            font-size: 24px;\n            letter-spacing: 1px;\n        }\n        .content {\n            padding: 30px 20px;\n        }\n        .intro-text {\n            font-size: 16px;\n            margin-bottom: 25px;\n        }\n        /* Product Grid Area */\n        .product-list {\n            margin-top: 20px;\n        }\n        /* Individual Product Card Styling */\n        .product-card { \n            border: 1px solid #e0e0e0; \n            border-radius: 8px; \n            margin-bottom: 20px; \n            padding: 15px;\n            display: block; \n            text-decoration: none;\n            transition: transform 0.2s;\n        }\n        .footer { \n            background-color: #f9f9f9;\n            padding: 20px; \n            font-size: 13px; \n            color: #777777; \n            text-align: center;\n            border-top: 1px solid #eeeeee;\n        }\n        .brand-link { \n            color: #ed1c24; \n            font-weight: bold; \n            text-decoration: none; \n        }\n    </style>\n</head>\n<body>\n    <div class=\"wrapper\">\n        <div class=\"container\">\n            <div class=\"header\">\n                <h2>Produktempfehlungen</h2>\n            </div>\n            \n            <div class=\"content\">\n                <p class=\"intro-text\">Sehr geehrte Kundin, sehr geehrter Kunde,</p>\n                \n                <p class=\"intro-text\">Basierend auf Ihrer Beschreibung empfehlen wir Ihnen folgende professionelle Geräte für Ihr Unternehmen:</p>\n                \n                <div class=\"product-list\">\n                    ${htmlRows}\n                </div>\n\n                <p style=\"margin-top: 25px;\">Sollten Sie Fragen zu diesen Artikeln haben, steht Ihnen unser Expertenteam gerne zur Verfügung.</p>\n            </div>\n\n            <div class=\"footer\">\n                <p>Herzliche Grüße,<br>\n                <span style=\"color: #333; font-weight: bold;\">GGM-Gastro Empfehlungsbot</span></p>\n                <p>\n                    <a href=\"https://www.ggmgastro.com/de-de-eur\" class=\"brand-link\">www.ggmgastro.com</a>\n                </p>\n            </div>\n        </div>\n    </div>\n</body>\n</html>\n`;\n\nreturn [{\n  json: {\n    htmlBody: finalHtml,\n    products: products\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        816,
+        16
+      ],
+      "id": "9f62d5d2-5b22-4f53-846c-1ff7044a47e0",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7fc9a42d-83e8-4400-a253-ba022ff48021",
+              "leftValue": "={{$('Webhook').first().json.body.send_email}}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1024,
+        16
+      ],
+      "id": "dbce5ba4-2d27-44e2-b8d4-5c7648aeb31f",
+      "name": "check if `send_email` selected"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$('Webhook').first().json.body.email}}",
+        "subject": "GGM-Gastro Produktempfehlungen",
+        "message": "={{ $json.htmlBody }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1216,
+        16
+      ],
+      "id": "8eafdbb3-eae0-4747-be69-32297c4b8f93",
+      "name": "Send email with recommendations",
+      "webhookId": "d385eaba-490c-462e-a53d-42cff0050818",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Yl5ToWBfSkp4wTLL",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "categories",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get category url": {
+      "main": [
+        [
+          {
+            "node": "extract url",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get recommendation": {
+      "main": [
+        [
+          {
+            "node": "structure recommendation objects into list",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "categories": {
+      "main": [
+        [
+          {
+            "node": "get category url",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extract url": {
+      "main": [
+        [
+          {
+            "node": "fetch html content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "fetch html content": {
+      "main": [
+        [
+          {
+            "node": "extract `main class` from html",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extract `main class` from html": {
+      "main": [
+        [
+          {
+            "node": "get recommendation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "structure recommendation objects into list": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "check if `send_email` selected",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check if `send_email` selected": {
+      "main": [
+        [
+          {
+            "node": "Send email with recommendations",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send email with recommendations": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "headers": {
+          "host": "localhost:5678",
+          "connection": "keep-alive",
+          "content-length": "176",
+          "sec-ch-ua-platform": "\"Linux\"",
+          "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
+          "sec-ch-ua": "\"Chromium\";v=\"148\", \"Brave\";v=\"148\", \"Not/A)Brand\";v=\"99\"",
+          "content-type": "application/json",
+          "sec-ch-ua-mobile": "?0",
+          "accept": "*/*",
+          "sec-gpc": "1",
+          "origin": "null",
+          "sec-fetch-site": "cross-site",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-dest": "empty",
+          "accept-encoding": "gzip, deflate, br, zstd",
+          "accept-language": "en-US,en;q=0.9"
+        },
+        "params": {},
+        "query": {},
+        "body": {
+          "description": "Ich eröffne eine kleine Pizzeria mit Schwerpunkt auf Speisen zum Mitnehmen und benötige Öfen mit hoher Kapazität",
+          "send_email": true,
+          "email": "ihre@email.de"
+        },
+        "webhookUrl": "http://localhost:5678/webhook/c976c5f9-2503-4897-a928-826017643028",
+        "executionMode": "production"
+      }
+    ],
+    "get category url": [
+      {
+        "content": {
+          "parts": [
+            {
+              "text": "{\n  \"link\": \"https://www.ggmgastro.com/de-de-eur/geschaeftsart/doenerladen\"\n}"
+            }
+          ],
+          "role": "model"
+        },
+        "finishReason": "STOP",
+        "index": 0
+      }
+    ],
+    "get recommendation": [
+      {
+        "content": {
+          "parts": [
+            {
+              "text": "{\n  \"products\": [\n    {\n      \"product_name\": \"Gyros-/ Dönergrills\",\n      \"product_link\": \"/de-de-eur/geschaeftsart/doenerladen/grundausstattung/gyros-doenergrills\",\n      \"price\": \"ab 709,99 €\",\n      \"image_link\": \"https://api.ggmgastro.com/img/480/400/resize/media/catalog/category/preview_image/gyros__d_nergrills_imagefile_Kategoriebild_Doenergrills_5635.jpg\"\n    },\n    {\n      \"product_name\": \"Döner- & Fladenbrotschneider\",\n      \"product_link\": \"/de-de-eur/geschaeftsart/doenerladen/grundausstattung/doener-und-fladenbrotschneider\",\n      \"price\": \"ab 10,99 €\",\n      \"image_link\": \"https://api.ggmgastro.com/img/480/400/resize/media/catalog/category/preview_image/D_NERMESSER_imagefile_Doenerschneider2_Kategorie_b7ef.jpg\"\n    },\n    {\n      \"product_name\": \"Saladetten\",\n      \"product_link\": \"/de-de-eur/geschaeftsart/doenerladen/grundausstattung/saladetten\",\n      \"price\": \"ab 449,99 €\",\n      \"image_link\": \"https://api.ggmgastro.com/img/480/400/resize/media/catalog/category/preview_image/saladetten_d_nertische_imagefile_Saladette_0cbb.png\"\n    },\n    {\n      \"product_name\": \"Kontaktsgrills\",\n      \"product_link\": \"/de-de-eur/geschaeftsart/doenerladen/grundausstattung/kontaktsgrills\",\n      \"price\": \"ab 16,99 €\",\n      \"image_link\": \"https://api.ggmgastro.com/img/480/400/resize/media/catalog/category/preview_image/KONTAKTSGRILLS_imagefile_cce6e474bff15b7393bb86ce148165436450a5fa_kontaktgrills_1156.jpg\"\n    },\n    {\n      \"product_name\": \"Backofen für Fladenbrot, türkische Pizza & Lavas\",\n      \"product_link\": \"/de-de-eur/geschaeftsart/doenerladen/grundausstattung/backofen-fuer-fladenbrot-tuerkische-pizza-und-lavas\",\n      \"price\": \"ab 3.999,99 €\",\n      \"image_link\": \"https://api.ggmgastro.com/img/480/400/resize/media/catalog/category/preview_image/1330741298_imagefile_Lavas_26eb.jpg\"\n    },\n    {\n      \"product_name\": \"Türkische Teekocher\",\n      \"product_link\": \"/de-de-eur/geschaeftsart/doenerladen/grundausstattung/tuerkische-teekocher\",\n      \"price\": \"ab 35,99 €\",\n      \"image_link\": \"https://api.ggmgastro.com/img/480/400/resize/media/catalog/category/preview_image/160845777_imagefile_Teekocher_99a0.jpg\"\n    },\n    {\n      \"product_name\": \"Zangen\",\n      \"product_link\": \"/de-de-eur/geschaeftsart/doenerladen/wichtiges-zubehoer/zangen\",\n      \"price\": \"ab 2,49 €\",\n      \"image_link\": \"https://api.ggmgastro.com/img/480/400/resize/media/catalog/category/preview_image/373523698_imagefile_Zangen_1b4a.jpg\"\n    },\n    {\n      \"product_name\": \"GN-Behälter - Edelstahl\",\n      \"product_link\": \"/de-de-eur/geschaeftsart/doenerladen/wichtiges-zubehoer/gn-behaelter-edelstahl\",\n      \"price\": \"ab 2,49 €\",\n      \"image_link\": \"https://api.ggmgastro.com/img/480/400/resize/media/catalog/category/preview_image/25019750_imagefile_GN_Behaelter_c3a5.jpg\"\n    },\n    {\n      \"product_name\": \"Getränkekühlschränke\",\n      \"product_link\": \"/de-de-eur/geschaeftsart/doenerladen/grundausstattung/getraenkekuehlschraenke\",\n      \"price\": \"ab 159,99 €\",\n      \"image_link\": \"https://api.ggmgastro.com/img/480/400/resize/media/catalog/category/preview_image/GETR_NKEK_HLSCHRANK_imagefile_Getraenkekuehlschrank_2_8e8d.jpg\"\n    },\n    {\n      \"product_name\": \"To-Go & Verpackungen\",\n      \"product_link\": \"/de-de-eur/geschaeftsart/doenerladen/wichtiges-zubehoer/to-go-und-verpackungen\",\n      \"price\": \"ab 30,99 €\",\n      \"image_link\": \"https://api.ggmgastro.com/img/480/400/resize/media/catalog/category/preview_image/912931401_imagefile_To_Go_5713.jpg\"\n    }\n  ]\n}",
+              "thoughtSignature": "...GivTd..."
+            }
+          ],
+          "role": "model"
+        },
+        "finishReason": "STOP",
+        "index": 0
+      }
+    ]
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6c25a9be98544dcd87239f859a2f9bec0c161823010a439bac0c029b8c8d414a"
+  }
+}

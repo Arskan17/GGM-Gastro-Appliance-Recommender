@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    container_name: n8n
+    restart: always
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_CORS_ALLOWED_ORIGINS=*
+      - GENERIC_TIMEZONE=Europe/Berlin
+      - TZ=Europe/Berlin
+    volumes:
+      - n8n_data:/home/node/.n8n
+      # Map the local `n8n_flow.json` file into the container
+      - ./n8n_flow.json:/home/node/n8n_flow.json
+    # Import the file BEFORE starting the main application
+    command: /bin/sh -c "n8n import:workflow --input=/home/node/n8n_flow.json && n8n start"
+
+  frontend:
+    build: .
+    container_name: ggm-bot-frontend
+    restart: always
+    ports:
+      - "8080:80"
+
+volumes:
+  n8n_data:

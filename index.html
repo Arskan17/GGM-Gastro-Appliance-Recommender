@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GGM Gastro | AI Recommendation Bot</title>
+    <link rel="icon" type="image/x-icon" href="https://www.ggmgastro.com/favicon.ico">
+    <style>
+        :root { 
+            --ggm-red: #ed1c24; 
+            --ggm-dark: #343a40;
+            --ggm-gray: #e9ecef;
+            --ggm-text: #212529;
+        }
+
+        body { 
+            font-family: 'Open Sans', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--ggm-gray); 
+            margin: 0; 
+            padding: 0; 
+            color: var(--ggm-text); 
+        }
+
+        .top-nav {
+            background-color: var(--ggm-dark);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .top-nav img {
+            height: 40px;
+        }
+
+        .container { 
+            max-width: 900px; 
+            margin: 40px auto; 
+            background: white; 
+            padding: 0; 
+            border-radius: 4px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .form-content {
+            padding: 40px;
+        }
+
+        .header-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header-title h1 {
+            font-size: 28px;
+            color: var(--ggm-dark);
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .header-title p {
+            color: #6c757d;
+            margin-top: 10px;
+        }
+
+        label { display: block; font-weight: 600; margin-bottom: 10px; font-size: 14px; }
+        
+        textarea { 
+            width: 100%; 
+            padding: 15px; 
+            border: 1px solid #ced4da; 
+            border-radius: 2px; 
+            height: 140px; 
+            margin-bottom: 25px; 
+            box-sizing: border-box; 
+            font-size: 15px;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--ggm-red);
+        }
+        
+        .email-section { 
+            background: #f8f9fa; 
+            padding: 20px; 
+            border: 1px solid #dee2e6;
+            border-radius: 4px; 
+            margin-bottom: 25px; 
+        }
+
+        .checkbox-group { display: flex; align-items: center; gap: 12px; }
+        
+        input[type="email"] { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ced4da; 
+            border-radius: 2px; 
+            margin-top: 15px;
+            display: none; 
+        }
+
+        .btn-primary { 
+            background: var(--ggm-red); 
+            color: white; 
+            border: none; 
+            padding: 18px 30px; 
+            font-size: 16px; 
+            border-radius: 2px; 
+            cursor: pointer; 
+            width: 100%; 
+            font-weight: bold; 
+            text-transform: uppercase;
+            transition: background 0.3s; 
+        }
+
+        .btn-primary:hover { background: #cc181f; }
+        .btn-primary:disabled { background: #adb5bd; cursor: not-allowed; }
+
+        /* Results Styling */
+        #results { padding: 40px; display: none; background: white; }
+        
+        .section-header {
+            border-bottom: 2px solid var(--ggm-red);
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+        }
+
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
+            gap: 25px; 
+        }
+
+        .card { 
+            border: 1px solid #dee2e6; 
+            padding: 15px; 
+            border-radius: 2px; 
+            text-align: center; 
+            display: flex; 
+            flex-direction: column;
+            transition: box-shadow 0.3s;
+        }
+
+        .card:hover { box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+
+        .card img { 
+            width: 100%; 
+            height: 200px; 
+            object-fit: contain; 
+            margin-bottom: 15px;
+        }
+
+        .card h3 { 
+            font-size: 14px; 
+            height: 40px; 
+            overflow: hidden; 
+            margin-bottom: 10px;
+            color: var(--ggm-text);
+        }
+
+        .price { 
+            color: var(--ggm-red); 
+            font-weight: 800; 
+            font-size: 20px; 
+            margin: 10px 0;
+        }
+
+        .btn-view { 
+            background: var(--ggm-dark); 
+            color: white; 
+            text-decoration: none; 
+            padding: 10px; 
+            font-size: 13px; 
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: auto;
+        }
+
+        /* Loader */
+        .loader { display: none; text-align: center; padding: 40px; }
+        .spinner { 
+            border: 4px solid rgba(237, 28, 36, 0.1); 
+            border-top: 4px solid var(--ggm-red); 
+            border-radius: 50%; 
+            width: 40px; height: 40px; 
+            animation: spin 1s linear infinite; 
+            margin: 0 auto 15px; 
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<div class="top-nav">
+    <img src="https://www.ggmgastro.com/logo.svg" alt="GGM Gastro Logo">
+</div>
+
+<div class="container">
+    <div class="form-content" id="formWrapper">
+        <div class="header-title">
+            <h1>AI Empfehlungs-Bot</h1>
+            <p>Finden Sie die perfekte Ausstattung für Ihr Gastronomie-Projekt.</p>
+        </div>
+
+        <form id="recommendationForm">
+            <label for="description">PROJEKTBESCHREIBUNG</label>
+            <textarea id="description" placeholder="Beschreiben Sie Ihr Lokal (z.B. Kapazität, Menü, Platzangebot)..." required></textarea>
+
+            <div class="email-section">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="sendEmail">
+                    <label for="sendEmail" style="cursor:pointer;">Ergebnisse per E-Mail senden</label>
+                </div>
+                <input type="email" id="email" placeholder="beispiel@mail.de">
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn-primary">Empfehlungen generieren</button>
+        </form>
+    </div>
+
+    <div class="loader" id="loader">
+        <div class="spinner"></div>
+        <p style="font-weight: bold;">Katalog wird durchsucht...</p>
+    </div>
+
+    <div id="results">
+        <div class="section-header">
+            <h2 style="margin: 0; font-size: 20px;">UNSERE EMPFEHLUNGEN</h2>
+        </div>
+        <div class="grid" id="productGrid"></div>
+        <button onclick="window.location.reload()" style="margin-top:40px; background:#6c757d;" class="btn-primary">Neue Suche</button>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById('recommendationForm');
+    const sendEmailCheckbox = document.getElementById('sendEmail');
+    const emailInput = document.getElementById('email');
+    const submitBtn = document.getElementById('submitBtn');
+    const loader = document.getElementById('loader');
+    const resultsDiv = document.getElementById('results');
+    const formWrapper = document.getElementById('formWrapper');
+    
+    const WEBHOOK_URL = 'http://localhost:5678/webhook/c976c5f9-2503-4897-a928-826017643028';
+
+    sendEmailCheckbox.addEventListener('change', (e) => {
+        emailInput.style.display = e.target.checked ? 'block' : 'none';
+        emailInput.required = e.target.checked;
+    });
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        submitBtn.disabled = true;
+        loader.style.display = 'block';
+        formWrapper.style.display = 'none';
+
+        const payload = {
+            description: document.getElementById('description').value,
+            send_email: sendEmailCheckbox.checked,
+            email: emailInput.value || null
+        };
+
+        try {
+            const response = await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                mode: 'cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) throw new Error(`Status: ${response.status}`);
+            const data = await response.json();
+            
+            // Parse product list from webhook
+            let products = [];
+            if (Array.isArray(data) && data.length > 0) {
+                products = data[0][""] || data[0].json?.[""] || data;
+            } else {
+                products = data[""] || data;
+            }
+
+            displayResults(Array.isArray(products) ? products : [products]);
+        } catch (error) {
+            alert('Fehler: ' + error.message);
+            formWrapper.style.display = 'block';
+        } finally {
+            submitBtn.disabled = false;
+            loader.style.display = 'none';
+        }
+    });
+
+    function displayResults(products) {
+        const grid = document.getElementById('productGrid');
+        grid.innerHTML = '';
+        
+        // Prepend to product links
+        const baseUrl = 'https://www.ggmgastro.com';
+
+        products.forEach(p => {
+            if (!p.product_name) return;
+            const fullLink = p.product_link.startsWith('http') ? p.product_link : baseUrl + p.product_link;
+            
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <img src="${p.image_link}" alt="${p.product_name}" onerror="this.src='https://placehold.co/300x300?text=No+Image'">
+                <h3>${p.product_name}</h3>
+                <p class="price">${p.price}</p>
+                <a href="${fullLink}" target="_blank" class="btn-view">Details Ansehen</a>
+            `;
+            grid.appendChild(card);
+        });
+
+        resultsDiv.style.display = 'block';
+    }
+</script>
+</body>
+</html>
